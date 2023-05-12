@@ -37,6 +37,6 @@ The StocksTrading project is distributed under the MIT License. See the `LICENSE
 ## Contact
 For any queries or suggestions, feel free to reach out.
 
-Project Link: [StocksTrading](https://github.com/shot4rz/StocksTrading)
+Project Link: [StockAnalysis](https://github.com/shot4rz/StockAnalysis)
 
 Hope you find the StocksTrading toolkit valuable and it aids in enhancing your trading strategies!
