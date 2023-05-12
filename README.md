@@ -1,4 +1,4 @@
-# StocksTrading
+# StockAnalysis
 
 Welcome to the StocksTrading repository, a project designed to download stock price data, backtest trading strategies, and optimize these strategies via differential evolution. Leaning on the `yfinance` library, StocksTrading downloads stock price data while applying the `TA-Lib` for calculating various technical analysis indicators. The `differential_evolution` function from the `SciPy` library is used for optimizing trading strategies.
 
