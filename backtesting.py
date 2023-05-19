@@ -9,7 +9,7 @@ MAKE_CSVS = True
 MAKE_PNGS = True
 PLOT_PORTFOLIO = True
 
-# optimized strategy parameters
+# optimized strategy parameters (optimized on 2010 - 2020 data)
 if STRATEGY == 'sma':
     params = {'fast_period': 23, 'slow_period': 77}
 elif STRATEGY == 'macd':
