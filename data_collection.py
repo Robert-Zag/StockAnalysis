@@ -1,4 +1,4 @@
-# a script that has to be run first, in order to download data
+# a script that has to be run first, gets S&P constituents from wikipedia, downloads data from yfinance
 import pandas as pd
 import numpy as np
 import time
@@ -7,34 +7,8 @@ import yfinance as yf
 from constants import *
 import os
 
-
-# scrape the company name from the website, since yfinance metadata call is currently broken
-def get_name(symbol):
-    full_name = False
-    if type(symbol) == str:
-        while not full_name:
-            try:
-                response = requests.get(f"https://finance.yahoo.com/quote/{symbol}/")
-                split_up_text = response.text.split('class="D(ib) Fz(18px)">')
-                if len(split_up_text) > 1:
-                    full_name = split_up_text[1].split('</h1>')[0]
-                    full_name = full_name.replace("&amp;", "&")
-                else:
-                    print(f'{symbol} has no name: https://finance.yahoo.com/quote/{symbol}/')
-                    manual_entry = input("enter the name manually?")
-                    if not manual_entry or manual_entry == 'n':
-                        full_name = np.nan
-                    else:
-                        print(f"saving {symbol} with name: {manual_entry}")
-                        full_name = manual_entry
-            except Exception as e:
-                print(f"Failed getting name for {symbol} because fo: {e}")
-                time.sleep(1)
-            time.sleep(1)
-    else:
-        print("not string")
-    print(f"Got name for {symbol}: {full_name}")
-    return full_name
+DOWNLOAD_DATA_START = dt.datetime(year=2000, month=1, day=1)
+DOWNLOAD_DATA_END = dt.datetime(year=2023, month=1, day=1)
 
 
 # create directories if missing
@@ -92,8 +66,8 @@ else:
 
 # if there is no data, download it
 if not os.path.isfile(f"{DATA_DIR_NAME}/{DATA_FILE_NAME}"):
-    end_date = dt.datetime(year=2023, month=1, day=1)
-    start_date = dt.datetime(year=1990, month=1, day=1)
+    end_date = DOWNLOAD_DATA_END
+    start_date = DOWNLOAD_DATA_START
     df = yf.download(list(mdf.index), start=start_date, end=end_date, interval="1d", group_by='ticker')
     df.to_csv(f"{DATA_DIR_NAME}/{DATA_FILE_NAME}")
 else:
@@ -103,8 +77,8 @@ df = pd.read_csv(f"{DATA_DIR_NAME}/{DATA_FILE_NAME}", parse_dates=True, index_co
 
 # if there is no s&p 500 data, download it
 if not os.path.isfile(f"{DATA_DIR_NAME}/{SP500_DATA_FILE_NAME}"):
-    end_date = dt.datetime(year=2023, month=1, day=1)
-    start_date = dt.datetime(year=1990, month=1, day=1)
+    end_date = DOWNLOAD_DATA_END
+    start_date = DOWNLOAD_DATA_START
     spdf = yf.download("^GSPC", start=start_date, end=end_date, interval="1d", group_by='ticker')
     spdf.to_csv(f"{DATA_DIR_NAME}/{SP500_DATA_FILE_NAME}")
 else:
@@ -129,10 +103,16 @@ if not os.path.isfile(f"{DATA_DIR_NAME}/{METADATA_FILE_NAME}"):
     mdf['quote_type'] = np.nan
     mdf['timezone'] = np.nan
 
-    for symbol in all_symbols:
+    for i, symbol in enumerate(all_symbols):
+        print(f"Downloading metadata for {symbol} {i+1}/{len(all_symbols)}")
         ticker = yf.Ticker(symbol)
         company_info = ticker.fast_info
-        mdf.loc[symbol, 'name_yf'] = get_name(symbol)
+        try:
+            company_name = ticker.info['longName'] + f" ({symbol})"
+            print(f"full company name (symbol): {company_name}")
+        except Exception as _:
+            company_name = symbol
+        mdf.loc[symbol, 'name_yf'] = company_name
         mdf.loc[symbol, 'currency'] = company_info['currency']
         mdf.loc[symbol, 'exchange'] = company_info['exchange']
         mdf.loc[symbol, 'quote_type'] = company_info['quoteType']
