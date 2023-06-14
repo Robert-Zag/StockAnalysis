@@ -34,9 +34,12 @@ Your contributions are greatly valued. Feel free to fork the project, make chang
 ## License
 The StocksTrading project is distributed under the MIT License. See the `LICENSE` file for more information.
 
+## Authors
+- Robert Zagoždžon
+
 ## Contact
 For any queries or suggestions, feel free to reach out.
 
 Project Link: [StockAnalysis](https://github.com/shot4rz/StockAnalysis)
 
-Hope you find the StocksTrading toolkit valuable and it aids in enhancing your trading strategies!
+Hope you find the Stocks Analysis project valuable and it aids in enhancing your trading strategies!
